@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://me.angry-arthas.com/sitemap.xml 

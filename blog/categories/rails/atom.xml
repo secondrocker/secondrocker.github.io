@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Rails | elephant]]></title>
+  <link href="http://me.angry-arthas.com/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://me.angry-arthas.com/"/>
+  <updated>2015-05-24T21:20:12+08:00</updated>
+  <id>http://me.angry-arthas.com/</id>
+  <author>
+    <name><![CDATA[secondrocker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Rails Way 翻译 第一章]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/05/24/the-rails-way-fan-yi/"/>
+    <updated>2015-05-24T19:18:10+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/05/24/the-rails-way-fan-yi</id>
+    <content type="html"><![CDATA[<h1>1 Rails 环境与配置</h1>
+
+<blockquote><p>Rails之所以获得很多关注和参与，是因为我不去取悦那些不愿意分享问题的人。生产环境和开发环境的区别对我来说是个大问题，所以我用我所知的最佳方式解决这个问题</p>
+
+<p>&ndash;dhh</p>
+
+<p>Rails预制了3种标准运行模式:developments,test以及production。这些基本的模式拥有一些标准的配置比如：连接那个数据库、是否对每个请求重新加载类。如果有必要，创建你自己的运行模式也很简单。</p>
+
+<p>当前的环境由环境变量RAILS_ENV指定，RAILS_ENV对应定义的运行方式并决定加载config/enviroments下定义的配置文件，你可以设置环境变量决定运行方式，或者使用默认的production模式。因为环境配置项决定Rails最重要的表现例如类文件的加载，为了真正了解Rails的运行方式，你应该理解这些环境配置。</p>
+
+<p>在本章，我们以Bundler开始,Bundler是一个管理ruby程序gem依赖的工具。Bundle有一个gem清单，他可以安装清单中的gems，以及这些gems所依赖的gems。之后我们通过研究boot.rb和application.rb以及三个标准模式的配置，理解Rails的启动和请求处理过程。我们也会讲到自定义运行环境的基础知识以及为什么自定义运行环境。</p>
+
+<p>本书不是以最新的Rails进行书写，为了理解本书你最少必须知道如何启动Rails程序以及理解MVC的意义。如果不符合，我建议你先看看Michael Hartl书写的Ruby on Rails Tutorial website一书。</p>
+
+<h2>1.1 Bundler</h2>
+
+<p>Bundler不是专为Rails设计的技术，但他是管理应用程序gem依赖的优先方式。Rails4依赖并默认会使用Bundler，你不必单独安装bundler这个gem</p>
+
+<p>因为我们觉得你应该使用Bundler，如何不使用Bundler只是作为练习以及为不循常规的人准备。</p>
+
+<p>Bundler最重要的是一次解决配置中所有的gem依赖。这不同于Rubygems和之前Rails使用的一次解决一个(one-at-a-time)的依赖解决方案，我们通过下面的难以修正的问题来说明。</p>
+
+<p>假设你的系统安装了下列版本的rubygem</p>
+
+<ul>
+<li>activesupport 4.0.2</li>
+<li>activesupport 3.2.11</li>
+<li>activemerchant 1.29.3</li>
+<li>rails 3.2.11</li>
+</ul>
+
+
+<p>因为activemerchant 1.29.3依赖 activesupport >= 2.3.14,所以当你用下面的gem 命令加载时
+<code>ruby
+gem 'activemerchant', '1.29.3'
+</code></p>
+
+<p>这会加载activemerchant，同时加载了最新版本的依赖gem，activesupport 4.0.2 gem,因为他比2.3.14版本高，之后当加载rails时:
+<code>ruby
+gem 'rails', '3.2.11'
+</code></p>
+
+<p>运行时出现了如下错误</p>
+
+<blockquote><p>can&rsquo;t activate activementsupport(=3.2.11,runtime)
+for[&ldquo;rails-3.2.11&rdquo;],already activated
+activesupport-4.0.2 for
+[&ldquo;activemerchant-1.29.3&rdquo;]</p></blockquote>
+
+<p>因为activemerchant对activesupport有广泛(broader)依赖，而旧版本的Rails却依赖较窄[narrow]的依赖。Bundler依靠一次评价并获取正确的gem版本来解决这个问题</p>
+
+<p>想了解有关Bundler构思出来的有趣设想请阅读 Yehuda&rsquo;s <a href="http://yehudakatz.com/2010/04/21/named-gem-environments-and-bundler/">blog post on the subject</a></p>
+
+<h3>1.1.1 Gemfile</h3>
+
+<p>定位到Rails项目的根目录下，有一个gem的清单文件-Gemfile，该文件基于ruby。Gemfile列出了Rails项目的所有依赖，包括正在使用的Rails版本。Gemfile的语法超级简单:</p></blockquote>
+
+<pre><code class="ruby">gem 'kaminari'
+gem 'nokogiri'
+</code></pre>
+
+<blockquote><p>把依赖写到指定一个或多个环境名作为符号的块中，就只在指定的运行环境下才加载这些依赖:</p></blockquote>
+
+<pre><code class="ruby">group :development do
+    gem 'pry-rails'
+end
+
+group :test do
+    gem 'capybara'
+    gem 'database_cleaner'
+end
+
+group  :development, :test do
+    gem 'rspec-rails'
+    gem 'factory_girl_rails'
+end
+</code></pre>
+
+<blockquote><blockquote><p>如果你从Rails3升级，记住Rails4不再为asset pipeline依赖的包使用assets分组，你需要把移除assets group分组</p></blockquote>
+
+<p>gem指令第二个参数为可选的，他指定了需要gem的特定版本，忽略该参数会自动获取最新稳定版本的gem，可能不是可用的最新版本，你需要指定确切的版本才能加载特定版本或者预览版。</p>
+
+<p>版本参数的格式你可能已经熟悉
+<code>ruby
+gem 'nokogiri', '1.5.6'
+gem 'pry-rails', '&gt; 0.2.2'
+gem 'decent_exposure', '~&gt; 2.0.1'
+gem 'draper', '1.0.0.beta6'
+</code>
+你可以在<a href="http://docs.rubygems.org/read/chapter/16">RubyGems documentation</a>  找到版本字符参数的完整说明</p>
+
+<p>有时候gem有特定的需求才能使用，不同于gem repo中的声明，这此种情况下，require选项很容易地解决
+<code>ruby
+gem 'webmock',require:'webmock/rspec'
+</code></p></blockquote>
+
+<h4>1.1.1.1 从git库加载gems</h4>
+
+<blockquote><p>到现在为止我们已经学会了从<a href="http://rubygems.org">http://rubygems.org</a> 加载gem。我们也可以从源代码库加载特定的gem，只要他的根目录下有.gemspec文件。只需在调用gem时添加:git选项。
+<code>ruby
+gem 'carrierwave', git: 'git@github.com:carriverwaveuploader/carrierwave.git'
+</code>
+如果gem的源代码库是在Github上托管并未public，你可以使用:github这个简便选项
+<code>ruby
+gem  'carriverwave', github: 'carriverwaveuploader/carrierwave'
+</code>
+也支持二进制或者c扩展的gemspec
+<code>ruby
+gem 'nokogiri', git: 'git://github.com/tenderlove/nokugiri.git'
+</code>
+如果gem的源代码库根目录下没有.gemspec文件，你必须指定确定的版本
+<code>ruby
+gem 'deep_merge' ,'1.0', git: 'git://github.com/peritor/deep_merge.git'
+</code>
+如果gem源代码库有多个.gemrspec文件，你可以指定使用特定的ref,branch,或者tag：
+<code>ruby
+gem 'rails', git 'git://github.com/rails/rails.git', ref: '4aded'
+gem 'rails', git 'git://github.com/rails/rails.git', branch: '3-2-stable'
+gem 'rails', git 'git://github.com/rails/rails.git', tag: 'v3.2.11'
+</code></p></blockquote>
+
+<h4>1.1.1.2 从文件系统中加载gems</h4>
+
+<blockquote><p>使用 :path选项，你可以使用本地开发中的gem
+<code>ruby
+gem 'nokogiri', path: '~/code/nokogiri'
+</code></p></blockquote>
+
+<h3>1.1.2 安装gems</h3>
+
+<blockquote><p>每次修改Gemfile,或者更具体地说，如果引入了未安装的依赖，运行bundle来确保Gemfile的所有依赖都可用。
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>bundle install&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;some information&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;
+</span><span class='line'>安装指令会在不导致冲突的情况下安装Gemfile下的所有gems至最新版本
+</span><span class='line'>你可以使用 --without 选项来不安装指定运行模式下的gems
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;<span class="nv">$ </span>bundle install <span class="p">&amp;</span>ndash<span class="p">;</span>without development <span class="nb">test</span>
+</span><span class='line'><span class="nv">$ </span>bundle install <span class="p">&amp;</span>ndash<span class="p">;</span>without <span class="nb">test</span>
+</span></code></pre></td></tr></table></div></figure></p></blockquote>
+
+<h3>1.1.3 gem锁</h3>
+
+<blockquote><p>每次运行 bundle install 或者 bundle update,Bundler计算所有的依赖关系并将结果存在一个名为Gemfile.lock的文件中。从这点看来，Bundler只会加载Gemfile锁定时所指定版本，你知道可以正确运行的gems。</p>
+
+<blockquote><p>Note
+Gemfile.lcok文件应该加入版本控制中，以确保每个电脑运行该程序时使用指定的相同版本的gems</p>
+
+<p>为了说明这点的重要性，想象一下在发布时Gemfile.lock丢失。因为依赖关系不存在了，Bundler只能在发布的机器上重新指定Gemfile中的gem版本，这会导致安装你未测试的新版本的gem，导致无法预料的问题。</p></blockquote></blockquote>
+
+<h3>1.1.4 打包gems</h3>
+
+<blockquote><p>你可以在你的rails应用程序中把vendor/cache下所有的gem打包
+<code>bash
+$ bundle package
+</code>
+在拥有打包的gems的应用中运行 bundle install &ndash;local会安装包内的gems，而不会连接rubygems.org或其他gems源。你可以在发布时使用这点来避免外部的依赖、或者你依赖在public代码库不可用的私有gems。</p>
+
+<blockquote><p>确保gem依赖在非rails脚本中可用</p>
+
+<p>非Rails脚本必须运行过Bundle exec来获得正确的初始运行环境。
+<code>$ bundle exec guard</code>
+Rails 4在生成新项目时会为rails执行环境在bin目录中生成binstubs，binstub是包含了bundle运行上下文执行环境的脚本。这意味着你不用每次执行都要加上bundle exec。binstubs是rails 4的一等公民，应该加入版本控制代码中。
+默认情况下，下边的stub在每个rails新项目中都可用:
+* bin/bundle
+* bin/rails
+* bin/rake
+* bin/spring</p>
+
+<p>从rails 3升级
+如果你从rails3升级且在以前使用Bundler生成过binstubs,你必须运行下列命令以升级binstubs
+<code>ruby
+bundle config --delete bin#关闭Bundlers的stub生成器
+rake rails:update:bin #使用rails4的新的指令
+git add bin #把bin文件加到版本控制中
+</code></p></blockquote>
+
+<p>使用bundle binstubs some-gem-name可以为bundler加入可执行的binstub，示例如下:
+<code>bash
+$ bundle binstubs guard
+</code>
+可在bin目录下创建guard bistub:</p></blockquote>
+
+<pre><code class="ruby">#!/usr/bin/env ruby
+#
+# This file was generated by Bundle.
+#
+# The application 'guard' is installed as part of a gem,and this file is here to facilitate(正式) running it
+#
+require 'pathname'
+ENV['BUNDLE_GEMFILE']  ||=
+File.expand_path("../../Gemfile", Pathname.new(_FILE_).realpath)
+
+require 'rubygems'
+require 'bundler/setup'
+
+load Gem.bin_path('guard','guard')
+</code></pre>
+
+<blockquote><p>使用binstubs,bin目录下的脚本可以直接运行
+<code>bash
+$ bin/guard
+</code></p></blockquote>
+
+<h2>1.2 rails启动以及应用配置</h2>
+
+<blockquote><p>当你使用rails启动进程(比如运行rails server)以处理请求时，首先执行的是 config/boot.rb的加载</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RSPEC学习1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2014/08/08/rspecxue-xi-1/"/>
+    <updated>2014-08-08T09:48:01+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2014/08/08/rspecxue-xi-1</id>
+    <content type="html"><![CDATA[<p>rails 安装 rspec
+- gem &lsquo;rspec-rails&rsquo;</p>
+
+<p>创建rspec配置文件
+- rails g rspec:install</p>
+
+<p>should与should_not
+- 对象如有valid?之类的方法，test可这么写model.should be_valid或model.should_not be_valid
+- model.should == xx  <strong>等同</strong> model.should eq xx</p>
+
+<p>expect
+- expect(model).to eq  some_thing</p>
+
+<p>let与before
+- let与before(:each)的一个区别是before可以初始化变量,let不能before可以这样
+<code>ruby
+before(:each) do
+    king="亚历山大"
+end
+</code>
+- before(:each) 每个测试相互独立，分别调用这个
+- before(:all)只调用这个一次
+- let可用于定义变量，如下，在测试用例中可使用 king_of_zombie变量
+<code>ruby
+  let(:king_of_zombie) do
+    "邓肯"
+  end
+</code>
+Load RSpec 2.x support by adding the following line (typically to your spec_helper.rb file):
+require &lsquo;capybara/rspec&rsquo;
+If you are using Rails, put your Capybara specs in spec/features.
+If you are not using Rails, tag all the example groups in which you want to use Capybara with :type => :feature.
+You can now write your specs like so:
+describe &ldquo;the signin process&rdquo;, :type => :feature do
+  before :each do
+    User.make(:email => &lsquo;<a href="&#109;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x75;&#x73;&#x65;&#x72;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#x75;&#115;&#x65;&#x72;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+  end
+<code>ruby
+  it "signs me in" do
+    visit '/sessions/new'
+    within("#session") do
+      fill_in 'Login', :with =&gt; 'user@example.com'
+      fill_in 'Password', :with =&gt; 'password'
+    end
+    click_link 'Sign in'
+    expect(page).to have_content 'Success'
+  end
+end
+</code>
+<a href="http://rubydoc.info/gems/rspec-rails/file/Capybara.md">http://rubydoc.info/gems/rspec-rails/file/Capybara.md</a>
+<a href="https://github.com/rspec/rspec-rails">https://github.com/rspec/rspec-rails</a></p>
+
+<p>Many users have been confused by the co-existence of the the Capybara::DSL (visit/page) alongside the rack-test DSL (get|post|put|delete|head/response.body) in examples in spec/requests and spec/controllers. As of rspec-rails-2.11.1 and capybara-2.0.0.beta2, these are separated as follows:</p>
+
+<p>Capybara::DSL is included
+- spec/features</p>
+
+<p>rack-test DSL is included in
+- spec/requests and spec/controllers</p>
+
+<p>Capybara::RSpecMatchers is added to examples in:
+- spec/features
+- spec/controllers
+- spec/views
+- spec/helpers
+- spec/mailers</p>
+
+<p>2012年6月,Rspec开发团队宣布,在v2.11中使用了新句法
+来替代传统的should式句法,如
+<code>ruby
+it "is true when true" do
+ true.should be_true
+end
+</code>
+新句法会把要测试的值传递给 expect() 方法,然后和匹配器比较:
+<code>ruby
+it "is true when true" do
+ expect(true).to be_true
+end
+</code></p>
+
+<p>当有多个it &ldquo;xxxx&rdquo; do end 而测试的主题一致时，
+可用
+<code>ruby
+subject{@object}
+it { should eq xx}
+it { should have_content("cccc")}
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

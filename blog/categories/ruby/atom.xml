@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby | elephant]]></title>
+  <link href="http://me.angry-arthas.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://me.angry-arthas.com/"/>
+  <updated>2015-05-24T21:20:12+08:00</updated>
+  <id>http://me.angry-arthas.com/</id>
+  <author>
+    <name><![CDATA[secondrocker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[对hash进行递归操作]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/05/11/dui-hashjin-xing-di-gui-cao-zuo/"/>
+    <updated>2015-05-11T20:49:11+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/05/11/dui-hashjin-xing-di-gui-cao-zuo</id>
+    <content type="html"><![CDATA[<blockquote><p>将hash {a:1,b:{c1:2,c2:3,c3:{d1:4,d2:5},e:6}}转化为下面字符串
+a = 1 , b_c1 = 2 , b_c2 = 3 , b_c3_d1 = 4 , b_c3_d2 = 5 , b_e = 6</p></blockquote>
+
+<pre><code class="ruby">hash = {a:1,b:{c1:2,c2:3,c3:{d1:4,d2:5},e:6}}
+
+def unfold(hash,p="")
+  arr = []
+  hash.each do|k,v|
+    if v.instance_of? Hash 
+      arr += unfold(v,p+k.to_s+"_")
+    else
+      arr &lt;&lt; "#{p}#{k.to_s} = #{v.to_s}"
+    end
+  end
+  arr
+end
+
+puts unfold(hash).join " , "
+</code></pre>
+
+<blockquote><p>递归操作一般用于将问题复杂度降低，但感觉ruby的栈使递归无法发挥，稍微大点的递归就会导致栈溢出，之前写的递归版本的插入排序，同样的思路在java/java/c#都很好用，但在ruby中就是不行，要么调整栈的大小，但运行缓慢，很多时候总是得换为循环，感觉应该不是算法的问题,不知道什么时候ruby才能解决这个问题</p>
+
+<hr />
+
+<p>之前写的插入排序
+<code>ruby
+def insertSort(left=[],arr)
+    return left unless (x=arr.pop)
+    left.each_with_index do |l,i|
+        if l&gt;x
+            left.insert i,x
+            return insertSort left,arr
+        end
+    end
+    left.push x
+    return insertSort left,arr
+end
+arr=[]
+arrE=(1..10000).to_a
+10000.times do |t|
+    tmp=rand(arrE.count)
+    arr.push (arrE.delete_at tmp)
+end
+puts (insertSort arr)
+</code></p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Super_method]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/03/18/super-method/"/>
+    <updated>2015-03-18T16:33:21+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/03/18/super-method</id>
+    <content type="html"><![CDATA[<pre><code class="ruby">class A
+  def show
+    "a method"
+  end
+end
+
+class B&lt;A
+  def show
+    "b method"
+  end
+end
+</code></pre>
+
+<p>怎样用类B的对象调用A的show方法?
+<code>ruby
+B.new.method(:show).super_memthod.call  #ruby 2.2可用
+</code>
+2.2之前
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">A</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
+</span><span class='line'>    <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">a</span> <span class="nb">method</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class B&amp;lt;A</span>
+</span><span class='line'><span class="sr">  alias_method :super_show ,:show</span>
+</span><span class='line'><span class="sr">  def show</span>
+</span><span class='line'><span class="sr">    &amp;ldquo;b method&amp;rdquo;</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">B.new.super_show</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby元编程1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2014/08/08/rubyyuan-bian-cheng-1/"/>
+    <updated>2014-08-08T10:59:50+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2014/08/08/rubyyuan-bian-cheng-1</id>
+    <content type="html"><![CDATA[<h1>ruby元编程之eigenclass</h1>
+
+<pre><code class="ruby">class BasicObject
+  def self.eigenclass
+    class &lt;&lt; self
+      self
+    end
+  end
+  def eigenclass
+    class &lt;&lt; self
+      self
+    end
+  end
+end
+
+class A
+  def self.haha
+    "ah"
+  end
+end
+
+class B &lt; A
+end
+
+#对象eigenclass的superclass就是对象的类
+b=B.new
+p b.eigenclass.superclass == B
+#类的eigenclass的superclass是类超类的eigenclass
+p B.eigenclass.superclass == B.superclass.eigenclass
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RSPEC学习1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2014/08/08/rspecxue-xi-1/"/>
+    <updated>2014-08-08T09:48:01+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2014/08/08/rspecxue-xi-1</id>
+    <content type="html"><![CDATA[<p>rails 安装 rspec
+- gem &lsquo;rspec-rails&rsquo;</p>
+
+<p>创建rspec配置文件
+- rails g rspec:install</p>
+
+<p>should与should_not
+- 对象如有valid?之类的方法，test可这么写model.should be_valid或model.should_not be_valid
+- model.should == xx  <strong>等同</strong> model.should eq xx</p>
+
+<p>expect
+- expect(model).to eq  some_thing</p>
+
+<p>let与before
+- let与before(:each)的一个区别是before可以初始化变量,let不能before可以这样
+<code>ruby
+before(:each) do
+    king="亚历山大"
+end
+</code>
+- before(:each) 每个测试相互独立，分别调用这个
+- before(:all)只调用这个一次
+- let可用于定义变量，如下，在测试用例中可使用 king_of_zombie变量
+<code>ruby
+  let(:king_of_zombie) do
+    "邓肯"
+  end
+</code>
+Load RSpec 2.x support by adding the following line (typically to your spec_helper.rb file):
+require &lsquo;capybara/rspec&rsquo;
+If you are using Rails, put your Capybara specs in spec/features.
+If you are not using Rails, tag all the example groups in which you want to use Capybara with :type => :feature.
+You can now write your specs like so:
+describe &ldquo;the signin process&rdquo;, :type => :feature do
+  before :each do
+    User.make(:email => &lsquo;<a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#117;&#x73;&#101;&#114;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;">&#x75;&#115;&#101;&#114;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+  end
+<code>ruby
+  it "signs me in" do
+    visit '/sessions/new'
+    within("#session") do
+      fill_in 'Login', :with =&gt; 'user@example.com'
+      fill_in 'Password', :with =&gt; 'password'
+    end
+    click_link 'Sign in'
+    expect(page).to have_content 'Success'
+  end
+end
+</code>
+<a href="http://rubydoc.info/gems/rspec-rails/file/Capybara.md">http://rubydoc.info/gems/rspec-rails/file/Capybara.md</a>
+<a href="https://github.com/rspec/rspec-rails">https://github.com/rspec/rspec-rails</a></p>
+
+<p>Many users have been confused by the co-existence of the the Capybara::DSL (visit/page) alongside the rack-test DSL (get|post|put|delete|head/response.body) in examples in spec/requests and spec/controllers. As of rspec-rails-2.11.1 and capybara-2.0.0.beta2, these are separated as follows:</p>
+
+<p>Capybara::DSL is included
+- spec/features</p>
+
+<p>rack-test DSL is included in
+- spec/requests and spec/controllers</p>
+
+<p>Capybara::RSpecMatchers is added to examples in:
+- spec/features
+- spec/controllers
+- spec/views
+- spec/helpers
+- spec/mailers</p>
+
+<p>2012年6月,Rspec开发团队宣布,在v2.11中使用了新句法
+来替代传统的should式句法,如
+<code>ruby
+it "is true when true" do
+ true.should be_true
+end
+</code>
+新句法会把要测试的值传递给 expect() 方法,然后和匹配器比较:
+<code>ruby
+it "is true when true" do
+ expect(true).to be_true
+end
+</code></p>
+
+<p>当有多个it &ldquo;xxxx&rdquo; do end 而测试的主题一致时，
+可用
+<code>ruby
+subject{@object}
+it { should eq xx}
+it { should have_content("cccc")}
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
