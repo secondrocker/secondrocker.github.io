@@ -164,17 +164,25 @@ class_eval</p>
 <p>为什么在instance_eval中 def 和define_method定义的一个为类方法(类的单件方法) 一个为实例方法呢？</p>
 
 <p>要解释这个问题，首先要有以下概念:
-ruby在执行时，会一直追踪当前对象（receiver）即self，但也会追踪当前类(current class)。instance_eval和class_eval都会修改self和current class:
-- klass.class_eval 修改self为klass，修改current class为klass
-- obj.instance_eval 修改self为obj,修改current class为obj的eigen_class（singleton_class)。</p>
+ruby在执行时，会一直追踪当前对象（receiver）即self，但也会追踪当前类(current class)。instance_eval和class_eval都会修改self和current class:</p>
+
+<ul>
+<li>klass.class_eval 修改self为klass，修改current class为klass</li>
+<li>obj.instance_eval 修改self为obj,修改current class为obj的eigen_class（singleton_class)。</li>
+</ul>
+
 
 <p>了解了以上知识，我们知道define_method的接受者为self,class_eval和instance_eval都改变self为调用者本身，所以定义的为实例方法；而对def起作用的是当前类（current class），class_eval修改当前类为调用者本身，所以定义的是类方法，而instance_eval修改当前类为调用者的eigen_class(singleton_class)，所以定义的是类方法(类的单件方法)。</p>
 
 <p>另外，class_eval仅类可调用，instance_eval则类和对象都可调用。</p>
 
-<p>class(instance)<em>exec与eval基本相似，但有以下不同：
-- </em>evals既可传递字符串，也可传递块，如123.instance_eval &lsquo;to_s&rsquo;
-- <em>exec只能传递块、不能传字符串，但</em>exec可以为block传递参数如  Class.instance_exec(&lsquo;Self&rsquo;){|x|p &ldquo;#{x}:self&rdquo;}</p>
+<p>class(instance)_exec与eval基本相似，但有以下不同：</p>
+
+<ul>
+<li>_evals既可传递字符串，也可传递块，如123.instance_eval &lsquo;to_s&rsquo;</li>
+<li><em>exec只能传递块、不能传字符串，但</em>exec可以为block传递参数如  Class.instance_exec(&lsquo;Self&rsquo;){|x|p &ldquo;#{x}:self&rdquo;}</li>
+</ul>
+
 
 <p>至此，class_eval，instance_eval,instance_exec,instance_eval概念基本都透彻了。
 对于current class有些未说清的（未研究透彻,初步判断current class 对关键字起作用，self对方法调用起作用~），回头研究完单写一篇。</p>
