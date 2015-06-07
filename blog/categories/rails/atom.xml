@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | elephant]]></title>
   <link href="http://me.angry-arthas.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-05-29T23:05:12+08:00</updated>
+  <updated>2015-06-08T01:46:32+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -238,7 +238,15 @@ $ bin/guard
 
 <h2>1.2 rails启动以及应用配置</h2>
 
-<blockquote><p>当你使用rails启动进程(比如运行rails server)以处理请求时，首先执行的是 config/boot.rb的加载</p></blockquote>
+<blockquote><p>当你使用rails启动进程(比如运行rails server)以处理请求时，首先执行的是 config/boot.rb的加载,在rails栈的启动中，将会涉及三个文件:
+* boot.rb Bunlder和加载路径的建立
+* application.rb 加载rails的gems,特定运行环境下的gems，配置应用程序
+* enviroment.rb 执行所有的安装</p></blockquote>
+
+<h3>1.2.1 application.rb</h3>
+
+<blockquote><p>config/application.rb是rails程序配置的所在，他是在config/enviroment.rb之前唯一被加载的。
+让我们一步一步看看创建rails程序的默认配置。顺便说下，改变这些配置文件需要重启程序才能起作用。</p></blockquote>
 ]]></content>
   </entry>
   
@@ -282,7 +290,7 @@ If you are not using Rails, tag all the example groups in which you want to use 
 You can now write your specs like so:
 describe &ldquo;the signin process&rdquo;, :type => :feature do
   before :each do
-    User.make(:email => &lsquo;<a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#x3a;&#117;&#115;&#101;&#x72;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#111;&#109;">&#117;&#x73;&#x65;&#114;&#x40;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+    User.make(:email => &lsquo;<a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#x73;&#101;&#x72;&#x40;&#x65;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#117;&#x73;&#x65;&#114;&#x40;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
   end
 <code>ruby
   it "signs me in" do

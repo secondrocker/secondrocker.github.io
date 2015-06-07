@@ -370,7 +370,15 @@ Rails 4在生成新项目时会为rails执行环境在bin目录中生成binstubs
 
 <h2>1.2 rails启动以及应用配置</h2>
 
-<blockquote><p>当你使用rails启动进程(比如运行rails server)以处理请求时，首先执行的是 config/boot.rb的加载</p></blockquote>
+<blockquote><p>当你使用rails启动进程(比如运行rails server)以处理请求时，首先执行的是 config/boot.rb的加载,在rails栈的启动中，将会涉及三个文件:
+* boot.rb Bunlder和加载路径的建立
+* application.rb 加载rails的gems,特定运行环境下的gems，配置应用程序
+* enviroment.rb 执行所有的安装</p></blockquote>
+
+<h3>1.2.1 application.rb</h3>
+
+<blockquote><p>config/application.rb是rails程序配置的所在，他是在config/enviroment.rb之前唯一被加载的。
+让我们一步一步看看创建rails程序的默认配置。顺便说下，改变这些配置文件需要重启程序才能起作用。</p></blockquote>
 </div>
 
 
@@ -407,6 +415,8 @@ Rails 4在生成新项目时会为rails执行环境在bin目录中生成binstubs
         <a class="basic-alignment left" href="/blog/2015/05/11/dui-hashjin-xing-di-gui-cao-zuo/" title="Previous Post: 对hash进行递归操作">&laquo; 对hash进行递归操作</a>
       
       
+        <a class="basic-alignment right" href="/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/" title="Next Post: instance_eval,instance_exec,class_eval,class_exec 区别">instance_eval,instance_exec,class_eval,class_exec 区别 &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -437,6 +447,10 @@ var duoshuoQuery = {short_name:"elephant"};
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/">Instance_eval,instance_exec,class_eval,class_exec 区别</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/05/24/the-rails-way-fan-yi/">The Rails Way 翻译 第一章</a>
       </li>
     
@@ -450,10 +464,6 @@ var duoshuoQuery = {short_name:"elephant"};
     
       <li class="post">
         <a href="/blog/2015/03/18/super-method/">Super_method</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/09/18/gitming-ling/">Git命令</a>
       </li>
     
   </ul>

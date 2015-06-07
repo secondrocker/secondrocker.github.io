@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 元编程 | elephant]]></title>
   <link href="http://me.angry-arthas.com/blog/categories/yuan-bian-cheng/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-05-29T23:05:12+08:00</updated>
+  <updated>2015-06-08T01:46:32+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Instance_eval,instance_exec,class_eval,class_exec 区别]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/"/>
+    <updated>2015-06-07T23:52:08+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie</id>
+    <content type="html"><![CDATA[<p>对于instance_eval和class_eval，在看ruby元编程时以为搞清楚了，但最近发现一种情况，却又让我迷糊了：
+class_eval
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">A</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">class_eval</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">a</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">a</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">define_method</span> <span class="ss">:b</span> <span class="k">do</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">b</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">a</span> <span class="c1"># &amp;lsquo;a&amp;rsquo;</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">b</span> <span class="c1"># &amp;lsquo;b&amp;rsquo;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">a</span><span class="err">和</span><span class="n">b</span><span class="err">都是</span><span class="n">A</span><span class="err">的实例方法</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;</span>
+</span><span class='line'><span class="sr">instance_eval</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class A</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">A.instance_eval do</span>
+</span><span class='line'><span class="sr">  def a</span>
+</span><span class='line'><span class="sr">    puts &amp;lsquo;a&amp;rsquo;</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">  define_method :b do</span>
+</span><span class='line'><span class="sr">    puts &amp;lsquo;b&amp;rsquo;</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">A.new.b # &amp;lsquo;b&amp;rsquo; b为实例方法</span>
+</span><span class='line'><span class="sr">A.new.a #  no method error!!!</span>
+</span><span class='line'><span class="sr">A.a # ‘a’</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>为什么在instance_eval中 def 和define_method定义的一个为类方法(类的单件方法) 一个为实例方法呢？</p>
+
+<p>要解释这个问题，首先要有以下概念:
+ruby在执行时，会一直追踪当前对象（receiver）即self，但也会追踪当前类(current class)。instance_eval和class_eval都会修改self和current class:
+* klass.class_eval 修改self为klass，修改current class为klass
+* obj.instance_eval 修改self为obj,修改current class为
+  obj的eigen_class（singleton_class)。</p>
+
+<p>了解了以上知识，我们知道define_method的接受者为self,class_eval和instance_eval都改变self为调用者本身，所以定义的为实例方法；而对def起作用的是当前类（current class），class_eval修改当前类为调用者本身，所以定义的是类方法，而instance_eval修改当前类为调用者的eigen_class(singleton_class)，所以定义的是类方法(类的单件方法)。</p>
+
+<p>另外，class_eval仅类可调用，instance_eval则类和对象都可调用。</p>
+
+<p>class(instance)<em>exec与eval基本相似，但有以下不同：
+* </em>evals既可传递字符串，也可传递块，如123.instance_eval &lsquo;to_s&rsquo;
+* <em>exec只能传递块、不能传字符串，但</em>exec可以为block传递参数如  Class.instance_exec(&lsquo;Self&rsquo;){|x|p &ldquo;#{x}:self&rdquo;}</p>
+
+<p>至此，class_eval，instance_eval,instance_exec,instance_eval概念基本都透彻了。
+对于current class有些未说清的（未研究透彻,初步判断current class 对关键字起作用，self对方法调用起作用~），回头研究完单写一篇。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ruby元编程1]]></title>

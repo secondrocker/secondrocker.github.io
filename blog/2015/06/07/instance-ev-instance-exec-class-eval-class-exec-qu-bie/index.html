@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Super_method - elephant</title>
+  <title>Instance_eval,instance_exec,class_eval,class_exec 区别 - elephant</title>
   <meta name="author" content="secondrocker">
 
   
-  <meta name="description" content="1
+  <meta name="description" content="对于instance_eval和class_eval，在看ruby元编程时以为搞清楚了，但最近发现一种情况，却又让我迷糊了：
+class_eval 1
 2
 3
 4
@@ -20,10 +21,11 @@
 9
 10
 11
-class A def show &quot;a method&quot; end
-end class B&lt;A def show &quot;b method&quot; end
-end 怎样用类B的对象调用A的show方法? 1
-B.new. &hellip;">
+12
+13
+class A
+end
+A.class_eval def a puts &#39;a&# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -32,7 +34,7 @@ B.new. &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://me.angry-arthas.com/blog/2015/03/18/super-method/">
+  <link rel="canonical" href="http://me.angry-arthas.com/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="elephant" type="application/atom+xml">
@@ -83,11 +85,11 @@ rel="stylesheet" type="text/css">-->
   
   <header>
     
-      <h1 class="entry-title">Super_method</h1>
+      <h1 class="entry-title">Instance_eval,instance_exec,class_eval,class_exec 区别</h1>
     
     
       <p class="meta">
-        <time class='entry-date' datetime='2015-03-18T16:33:21+08:00'><span class='date'>2015-03-18</span> <span class='time'>16:33:21</span></time>
+        <time class='entry-date' datetime='2015-06-07T23:52:08+08:00'><span class='date'>2015-06-07</span> <span class='time'>23:52:08</span></time>
 
 
         
@@ -96,39 +98,8 @@ rel="stylesheet" type="text/css">-->
   </header>
 
 
-<div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">A</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
-</span><span class='line'>    <span class="s2">&quot;a method&quot;</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">B</span><span class="o">&lt;</span><span class="n">A</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
-</span><span class='line'>    <span class="s2">&quot;b method&quot;</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎样用类B的对象调用A的show方法?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">B</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span><span class="o">.</span><span class="n">super_memthod</span><span class="o">.</span><span class="n">call</span>  <span class="c1">#ruby 2.2可用</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>2.2之前</p>
+<div class="entry-content"><p>对于instance_eval和class_eval，在看ruby元编程时以为搞清楚了，但最近发现一种情况，却又让我迷糊了：
+class_eval</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -144,20 +115,70 @@ rel="stylesheet" type="text/css">-->
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">A</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
-</span><span class='line'>    <span class="s2">&quot;a method&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">class_eval</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">a</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;a&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">define_method</span> <span class="ss">:b</span> <span class="k">do</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;b&#39;</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">B</span><span class="o">&lt;</span><span class="n">A</span>
-</span><span class='line'>  <span class="n">alias_method</span> <span class="ss">:super_show</span> <span class="p">,</span><span class="ss">:show</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
-</span><span class='line'>    <span class="s2">&quot;b method&quot;</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="n">B</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">super_show</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">a</span> <span class="c1"># &#39;a&#39;</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">b</span> <span class="c1"># &#39;b&#39;</span>
+</span><span class='line'><span class="c1">#a和b都是A的实例方法</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>instance_eval</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">A</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">a</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;a&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">define_method</span> <span class="ss">:b</span> <span class="k">do</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;b&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">b</span> <span class="c1"># &#39;b&#39; b为实例方法</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">a</span> <span class="c1">#  no method error!!!</span>
+</span><span class='line'><span class="n">A</span><span class="o">.</span><span class="n">a</span> <span class="c1"># ‘a’</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为什么在instance_eval中 def 和define_method定义的一个为类方法(类的单件方法) 一个为实例方法呢？</p>
+
+<p>要解释这个问题，首先要有以下概念:
+ruby在执行时，会一直追踪当前对象（receiver）即self，但也会追踪当前类(current class)。instance_eval和class_eval都会修改self和current class:
+* klass.class_eval 修改self为klass，修改current class为klass
+* obj.instance_eval 修改self为obj,修改current class为
+  obj的eigen_class（singleton_class)。</p>
+
+<p>了解了以上知识，我们知道define_method的接受者为self,class_eval和instance_eval都改变self为调用者本身，所以定义的为实例方法；而对def起作用的是当前类（current class），class_eval修改当前类为调用者本身，所以定义的是类方法，而instance_eval修改当前类为调用者的eigen_class(singleton_class)，所以定义的是类方法(类的单件方法)。</p>
+
+<p>另外，class_eval仅类可调用，instance_eval则类和对象都可调用。</p>
+
+<p>class(instance)<em>exec与eval基本相似，但有以下不同：
+* </em>evals既可传递字符串，也可传递块，如123.instance_eval &lsquo;to_s&rsquo;
+* <em>exec只能传递块、不能传字符串，但</em>exec可以为block传递参数如  Class.instance_exec(&lsquo;Self&rsquo;){|x|p &ldquo;#{x}:self&rdquo;}</p>
+
+<p>至此，class_eval，instance_eval,instance_exec,instance_eval概念基本都透彻了。
+对于current class有些未说清的（未研究透彻,初步判断current class 对关键字起作用，self对方法调用起作用~），回头研究完单写一篇。</p>
 </div>
 
 
@@ -168,14 +189,14 @@ rel="stylesheet" type="text/css">-->
 
 <span class="byline author vcard">Posted by <span class="fn">secondrocker</span></span>
 
-      <time class='entry-date' datetime='2015-03-18T16:33:21+08:00'><span class='date'>2015-03-18</span> <span class='time'>16:33:21</span></time>
+      <time class='entry-date' datetime='2015-06-07T23:52:08+08:00'><span class='date'>2015-06-07</span> <span class='time'>23:52:08</span></time>
 
 
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/yuan-bian-cheng/'>元编程</a>
   
 </span>
 
@@ -191,17 +212,15 @@ rel="stylesheet" type="text/css">-->
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/09/18/gitming-ling/" title="Previous Post: git命令">&laquo; git命令</a>
+        <a class="basic-alignment left" href="/blog/2015/05/24/the-rails-way-fan-yi/" title="Previous Post: The rails way 翻译 第一章">&laquo; The rails way 翻译 第一章</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2015/03/18/constructor-and-and-prototype/" title="Next Post: constructor &amp;&amp; prototype">constructor &amp;&amp; prototype &raquo;</a>
       
     </p>
   </footer>
 </article>
 <!-- 多说评论框 start -->
 <div style="padding:0px  55px 0px; 55px;">
-  <div class="ds-thread" data-thread-key='/blog/2015/03/18/super-method/' data-title='super_method' data-url='http://me.angry-arthas.com/blog/2015/03/18/super-method/'></div>
+  <div class="ds-thread" data-thread-key='/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/' data-title='instance_eval,instance_exec,class_eval,class_exec 区别' data-url='http://me.angry-arthas.com/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/'></div>
 </div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
