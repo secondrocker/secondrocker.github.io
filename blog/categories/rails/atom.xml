@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | elephant]]></title>
   <link href="http://me.angry-arthas.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-06-08T01:53:11+08:00</updated>
+  <updated>2015-09-06T01:00:36+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -12,6 +12,281 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rake学习2]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/"/>
+    <updated>2015-09-06T00:37:25+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2</id>
+    <content type="html"><![CDATA[<p>启动一个rack程序有两种方式</p>
+
+<ul>
+<li>直接使用ruby运行.rb文件,默认在8080启动服务，无日志文件</li>
+<li>使用rackup，默认在9292 启动服务，有日志文件，rackup可使用 -o 指定ip, －p 指定端口号</li>
+</ul>
+
+
+<pre><code>require 'rack'
+app = lambda{|env| [200,{},["hello world"]] }
+Rack::Server.new.server.run app
+</code></pre>
+
+<pre><code class="bash">ruby  xxx.rb 
+</code></pre>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/19532-fe374674bf1d9442.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="无log输出" /></p>
+
+<pre><code class="ruby">#test.ru
+run lambda{|env| [ 200,{},["rackup start"] ]}
+</code></pre>
+
+<pre><code class="bash">rackup test.ru
+</code></pre>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/19532-adb4372d3fafaae5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="有log输出" /></p>
+
+<p>rack会在启动时默认加载一些中间件:</p>
+
+<pre><code class="ruby"> def logging_middleware
+        lambda { |server|
+          server.server.name =~ /CGI/ || server.options[:quiet] ? nil : [Rack::CommonLogger, $stderr]
+        }
+      end
+
+        m = Hash.new {|h,k| h[k] = []}
+        m["deployment"] = [
+          [Rack::ContentLength],
+          [Rack::Chunked],
+          logging_middleware,
+          [Rack::TempfileReaper]
+        ]
+        m["development"] = [
+          [Rack::ContentLength],
+          [Rack::Chunked],
+          logging_middleware,
+          [Rack::ShowExceptions],
+          [Rack::Lint],
+          [Rack::TempfileReaper]
+        ]
+
+        m
+      end
+</code></pre>
+
+<p>包括body长度错误提示访问记录等。</p>
+
+<p>rack有一个Directory的中间件，可以为目录文件生成一个web服务，今天主要研究这个。
+使用很简单一句话</p>
+
+<pre><code class="ruby">#test.ru
+run  Rack::Directory.new "~/"
+</code></pre>
+
+<pre><code class="bash">rackup test.ru
+</code></pre>
+
+<p>这样就会把home目录下的所有文件、文件夹在浏览器中显示
+<img src="http://upload-images.jianshu.io/upload_images/19532-144fd52fb50a8428.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="文件页面" /></p>
+
+<p>rails应用中使用rake middleware即可显示所有的middleware(中间件)
+<code>bash
+** **rake middleware
+use Rack::Sendfile
+use ActionDispatch::Static
+use Rack::Lock
+use #&lt;ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x007feef1563b90&gt;
+use Rack::Runtime
+use Rack::MethodOverride
+use ActionDispatch::RequestId
+use Rails::Rack::Logger
+use ActionDispatch::ShowExceptions
+use WebConsole::Middleware
+use ActionDispatch::DebugExceptions
+use ActionDispatch::RemoteIp
+use ActionDispatch::Reloader
+use ActionDispatch::Callbacks
+use ActiveRecord::Migration::CheckPending
+use ActiveRecord::ConnectionAdapters::ConnectionManagement
+use ActiveRecord::QueryCache
+use ActionDispatch::Cookies
+use ActionDispatch::Session::CookieStore
+use ActionDispatch::Flash
+use ActionDispatch::ParamsParser
+use Rack::Head
+use Rack::ConditionalGet
+use Rack::ETag
+run Fool::Application.routes
+</code>
+rails使用了rack定义的一些中间件，自定义了一些中间件，其中自定义的routes为rack程序，routes 把rails controller的action变为lambda并作为rack程序运行，在rails console里输入</p>
+
+<pre><code class="bash">2.2.1 :001 &gt; QuestionsController.action(:new)
+ =&gt; #&lt;Proc:0x007fbe482ee0b0@/Users/killman/.rvm/gems/ruby-2.2.1/gems/actionpack-4.2.1/lib/action_controller/metal.rb:237 (lambda)&gt; 
+</code></pre>
+
+<p>在config/application.rb可添加、删除、修改中间件</p>
+
+<pre><code class="ruby">config.middleware.use(new_middleware, args)＃：把新中间件添加到列表末尾；
+config.middleware.insert_before(existing_middleware,
+ new_middleware, args)#：在 existing_middleware
+ 之前添加新中间件；
+config.middleware.insert_after(existing_middleware,
+ new_middleware, args)#：在 existing_middleware
+ 之后添加新中间件；
+config.middleware.swap ActionDispatch::ShowExceptions, Lifo::ShowExceptions #替换中间件
+config.middleware.delete "Rack::Lock"#删除中间件
+</code></pre>
+
+<h3>中间件的作用：</h3>
+
+<p><strong>Rack::Sendfile
+</strong>：设置服务器上的 X-Sendfile 报头。通过 config.action_dispatch.x_sendfile_header
+ 选项设置。
+<strong>ActionDispatch::Static
+</strong>：用来服务静态资源文件。如果选项 config.serve_static_assets
+ 为 false
+，则禁用这个中间件。
+<strong>Rack::Lock
+</strong>：把 env[&ldquo;rack.multithread&rdquo;]
+ 旗标设为 false
+，程序放入互斥锁中。
+<strong>ActiveSupport::Cache::Strategy::LocalCache::Middleware
+</strong>：在内存中保存缓存，非线程安全。
+<strong>Rack::Runtime
+</strong>：设置 X-Runtime 报头，即执行请求的时长，单位为秒。
+<strong>Rack::MethodOverride
+</strong>：如果指定了 params[:_method]
+ 参数，会覆盖所用的请求方法。这个中间件实现了 PUT 和 DELETE 方法。
+<strong>ActionDispatch::RequestId
+</strong>：在响应中设置一个唯一的 X-Request-Id 报头，并启用 ActionDispatch::Request#uuid
+ 方法。
+<strong>Rails::Rack::Logger
+</strong>：请求开始时提醒日志，请求完成后写入日志。
+<strong>ActionDispatch::ShowExceptions
+</strong>：补救程序抛出的所有异常，调用处理异常的程序，使用特定的格式显示给用户。
+<strong>ActionDispatch::DebugExceptions
+</strong>：如果在本地开发，把异常写入日志，并显示一个调试页面。
+<strong>ActionDispatch::RemoteIp
+</strong>：检查欺骗攻击的 IP。
+<strong>ActionDispatch::Reloader
+</strong>：提供“准备”和“清理”回调，协助开发环境中的代码重新加载功能。
+<strong>ActionDispatch::Callbacks
+</strong>：在处理请求之前调用“准备”回调。
+<strong>ActiveRecord::Migration::CheckPending
+</strong>：检查是否有待运行的迁移，如果有就抛出 ActiveRecord::PendingMigrationError
+ 异常。
+<strong>ActiveRecord::ConnectionAdapters::ConnectionManagement
+</strong>：请求处理完成后，清理活跃的连接，除非在发起请求的环境中把 rack.test
+ 设为 true
+。
+<strong>ActiveRecord::QueryCache
+</strong>：启用 Active Record 查询缓存。
+<strong>ActionDispatch::Cookies
+</strong>：设置请求的 cookies。
+<strong>ActionDispatch::Session::CookieStore
+</strong>：负责把会话存储在 cookies 中。
+<strong>ActionDispatch::Flash
+</strong>：设置 Flash 消息的键。只有设定了 config.action_controller.session_store
+ 选项时才可用。
+<strong>ActionDispatch::ParamsParser
+</strong>：把请求中的参数出入 params
+。
+<strong>ActionDispatch::Head
+</strong>：把 HEAD 请求转换成 GET 请求，并处理。
+<strong>Rack::ConditionalGet
+</strong>：添加对“条件 GET”的支持，如果页面未修改，就不响应。
+<strong>Rack::ETag
+</strong>：为所有字符串类型的主体添加 ETags 报头。ETags 用来验证缓存。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/">me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rake学习1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/"/>
+    <updated>2015-09-06T00:24:51+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1</id>
+    <content type="html"><![CDATA[<blockquote><p>rack是ruby服务器和rack应用程序之间的一个框架，rails,sinatra都是基
+于rack构建的，都属于rack应用程序。</p>
+
+<p>rack提供了一个标准的接口，用于与服务器进行交互。标准的rack程序
+是一个可以响应call的对象，可以是对象、Proc、lambda甚至是method，
+它接收env参数（环境对象），返回一个数组，数组包括：</p></blockquote>
+
+<ul>
+<li>状态(status)，http响应状态码</li>
+<li>可以是hash，为http的header信息</li>
+<li>拥有each方法的对象，each返回字符串</li>
+</ul>
+
+
+<blockquote><p>rack通过中间件来进行扩展，即对原始的rack程序进行装饰，
+在原有返回数组的基础上进一步处理，并返回rack对象</p>
+
+<p>简单的rack程序</p></blockquote>
+
+<pre><code class="ruby">require 'rack'
+
+app = lambda{|env|[200,{},["hello from rack"]]}
+Rack::Handler::WEBrick.run app
+</code></pre>
+
+<blockquote><p>使用中间件的rack程序</p></blockquote>
+
+<pre><code class="ruby">require 'rack'
+
+class Decorator
+  def initialize(app)
+    @app = app
+  end
+  def call(env)
+    status, headers, body = @app.call(env)
+    new_body = "from middleware input &lt;br/&gt;"
+    body.each{|str| new_body &lt;&lt; str}
+    headers['Content-Length'] = new_body.bytesize.to_s
+    [status, headers, [new_body]]
+  end
+end
+
+app = lambda{|env|[200,{},["hello from rack"]]}
+Rack::Handler::WEBrick.run Decorator.new(app)
+</code></pre>
+
+<blockquote><p>上面使用中间件的方法在使用多个时容易混乱，rack有一个Builder类可以有效管理
+使用如下</p></blockquote>
+
+<pre><code class="ruby">require 'rack'
+require 'decorator'
+
+app = Rack::Builder.new{
+  use Rack::ContentLength
+  use Decorator
+  run lambda {|env| [200, {"Content-Type"=&gt;"text/html"}, ["hello world"]]}
+}.to_app
+Rack::Handler::WEBrick.run app
+</code></pre>
+
+<blockquote><p>使用Rack::Builder的map方法，可以创建有路由的rack程序</p></blockquote>
+
+<pre><code class="ruby">require 'rack'
+app = Rack::Builder.new {
+  map '/hello' do
+run lambda {|env| [200, {"Content-Type" =&gt; "text/html"}, ["hello"]] } end
+map '/world' do
+run lambda {|env| [200, {"Content-Type" =&gt; "text/html"}, ["world"]] }
+end
+map '/' do
+run lambda {|env| [200, {"Content-Type" =&gt; "text/html"}, ["all"]] } end
+}.to_app
+Rack::Handler::WEBrick.run app, :Port =&gt; 3000
+</code></pre>
+
+<p>由于rails的全栈性，rack中间件很多，在一些高并发但业务简单的网站或api使用时
+响应时间过长，在这种情况下可以考虑使用rack或者sinatra。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/">me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Rails Way 翻译 第一章]]></title>
@@ -290,7 +565,7 @@ If you are not using Rails, tag all the example groups in which you want to use 
 You can now write your specs like so:
 describe &ldquo;the signin process&rdquo;, :type => :feature do
   before :each do
-    User.make(:email => &lsquo;<a href="&#x6d;&#97;&#x69;&#108;&#116;&#x6f;&#58;&#117;&#115;&#101;&#114;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#x75;&#115;&#x65;&#x72;&#64;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#109;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+    User.make(:email => &lsquo;<a href="&#109;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x75;&#115;&#x65;&#114;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#109;">&#x75;&#115;&#x65;&#114;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
   end
 <code>ruby
   it "signs me in" do

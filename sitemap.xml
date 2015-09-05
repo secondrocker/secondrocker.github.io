@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://me.angry-arthas.com/blog/2015/09/06/angularjsqian-chang-1/</loc>
+    <lastmod>2015-09-06T00:39:14+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/</loc>
+    <lastmod>2015-09-06T00:37:25+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/</loc>
+    <lastmod>2015-09-06T00:24:51+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://me.angry-arthas.com/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/</loc>
     <lastmod>2015-06-07T23:52:08+08:00</lastmod>
   </url>
@@ -69,5 +81,14 @@
   </url>
   <url>
     <loc>http://me.angry-arthas.com/blog/categories/git/</loc>
+  </url>
+  <url>
+    <loc>http://me.angry-arthas.com/blog/categories/rake/</loc>
+  </url>
+  <url>
+    <loc>http://me.angry-arthas.com/blog/categories/angularjs/</loc>
+  </url>
+  <url>
+    <loc>http://me.angry-arthas.com/posts/2/</loc>
   </url>
 </urlset>

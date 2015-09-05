@@ -4,7 +4,7 @@
   <title><![CDATA[elephant]]></title>
   <link href="http://me.angry-arthas.com/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-06-08T01:53:11+08:00</updated>
+  <updated>2015-09-06T01:00:36+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -12,6 +12,540 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Angularjs浅尝1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/06/angularjsqian-chang-1/"/>
+    <updated>2015-09-06T00:39:14+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/06/angularjsqian-chang-1</id>
+    <content type="html"><![CDATA[<p>AngularJS是为了克服HTML在构建应用上的不足而设计的。通常，我们是通过以下技术来解决静态网页技术在构建动态应用上的不足：</p>
+
+<ul>
+<li>类库 - 类库是一些函数的集合，它能帮助你写WEB应用。起主导作用的是你的代码，由你来决定何时使用类库。类库有：jQuery等</li>
+<li>框架 - 框架是一种特殊的、已经实现了的WEB应用，你只需要对它填充具体的业务逻辑。这里框架是起主导作用的，由它来根据具体的应用逻辑来调用你的代码。框架有：knockout、sproutcore等。</li>
+</ul>
+
+
+<p> AngularJS使用了不同的方法，它尝试去补足HTML本身在构建应用方面的缺陷。AngularJS通过使用我们称为标识符(directives)的结构，让浏览器能够识别新的语法。例如：</p>
+
+<ul>
+<li>使用双大括号语法进行数据绑定；</li>
+<li>使用DOM控制结构来实现迭代或者隐藏DOM片段；</li>
+<li>支持表单和表单的验证；</li>
+<li>能将逻辑代码关联到相关的DOM元素上；</li>
+<li>能将HTML分组成可重用的组件。</li>
+</ul>
+
+
+<p>Demo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!doctype html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html</span> <span class="na">ng-app=</span><span class="s">&quot;index&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;title&gt;</span>angularjs test<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src =</span><span class="err"> </span><span class="s">&quot;/javascripts/angular-1.0.1.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src =</span><span class="err"> </span><span class="s">&quot;/javascripts/controller.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/head&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;body</span> <span class="na">ng-controller=</span><span class="s">&quot;IndexCtrl&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;contact in contacts&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        name:,age:,hometown:,
+</span><span class='line'>      <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>    name:<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">ng-model=</span><span class="s">&quot;new_contact.name&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    age:<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">ng-model =</span><span class="s">&quot;new_contact.age&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    hometown:<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">ng-model =</span><span class="err"> </span><span class="s">&quot;new_contact.hometown&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">&quot;add_contact()&quot;</span><span class="nt">&gt;</span>新增<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,[]).</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;IndexCtrl&#39;</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">){</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">contacts</span> <span class="o">=</span> <span class="p">[{</span>
+</span><span class='line'>      <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;陈冠希,</span>
+</span><span class='line'><span class="s1">      age:20,</span>
+</span><span class='line'><span class="s1">      hometown:&#39;</span><span class="nx">hk</span>
+</span><span class='line'>    <span class="p">},{</span>
+</span><span class='line'>      <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;张柏芝,</span>
+</span><span class='line'><span class="s1">      age:22,</span>
+</span><span class='line'><span class="s1">      hometown:&#39;</span><span class="nx">hk</span><span class="s1">&#39;}];</span>
+</span><span class='line'><span class="s1">  $scope.reset_contact = function(){</span>
+</span><span class='line'><span class="s1">    $scope.new_contact = {</span>
+</span><span class='line'><span class="s1">      name:&#39;&#39;,</span>
+</span><span class='line'><span class="s1">      age:&#39;&#39;,</span>
+</span><span class='line'><span class="s1">      hometown:&#39;</span><span class="err">&#39;</span>
+</span><span class='line'>    <span class="p">};};</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">add_contact</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">contacts</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">new_contact</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">reset_contact</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">};});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ng-app表明angularjs将对其标签声明内的dom进行处理,index名字是作用域名，表明属于index作用域。angular.module(&lsquo;index&rsquo;,[]).controller表明在index作用域内定义controller，同理ng-controller表明其内的变量属于IndexCtrl。
+ng-model声明此标检绑定在new_contact变量，angularjs控制其值随变量而改变。ng-click声明由add_contact处理点击。在li标签里面的ng-repeat=&ldquo;contact in contacts"语句是一个AngularJS迭代器。这个迭代器告诉AngularJS用第一个li标签作为模板为列表中的每一个联系人创建一个li元素。由此当点击新增按钮时将输入框内所代表的model添加到contacts内，并将add_contact变量置空，而页面的显示由angularjs自动完成。
+angularjs只对ng-app内的dom起作用，因此可以在任何页面使用angularjs而不破坏ng-app外的所有dom，js。
+angularjs与restful后端交互非常方便，使用ngResource组件，声明好CRUD的路径、http veb，就可方便调用save,update与后端交互。
+Demo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">app</span><span class="o">=</span><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s">&quot;index&quot;</span><span class="p">,[</span><span class="s">&quot;ngResource&quot;</span><span class="p">])</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span> <span class="s">&quot;Contact&quot;</span><span class="p">,</span><span class="nf">($resource) -&gt;</span>
+</span><span class='line'><span class="nx">$resource</span><span class="p">(</span><span class="s">&quot;/contacts/:id.json&quot;</span><span class="p">,{</span><span class="nx">id</span><span class="o">:</span><span class="s">&quot;@id&quot;</span><span class="p">},{</span><span class="nx">update</span><span class="o">:</span><span class="p">{</span><span class="nx">method</span><span class="o">:</span><span class="s">&quot;put&quot;</span><span class="p">}})</span>
+</span><span class='line'><span class="nv">$scope.contacts = </span><span class="nx">Contact</span><span class="p">.</span><span class="nx">query</span> <span class="c1"># /contacts</span>
+</span><span class='line'><span class="nx">Contact</span><span class="p">.</span><span class="nx">save</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">new_contact</span> <span class="c1">#create</span>
+</span><span class='line'><span class="nx">contact</span><span class="p">.</span><span class="nx">$update</span> <span class="c1">#更新</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/06/angularjsqian-chang-1/">me.angry-arthas.com/blog/2015/09/06/angularjsqian-chang-1/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rake学习2]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/"/>
+    <updated>2015-09-06T00:37:25+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2</id>
+    <content type="html"><![CDATA[<p>启动一个rack程序有两种方式</p>
+
+<ul>
+<li>直接使用ruby运行.rb文件,默认在8080启动服务，无日志文件</li>
+<li>使用rackup，默认在9292 启动服务，有日志文件，rackup可使用 -o 指定ip, －p 指定端口号</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>require 'rack'
+</span><span class='line'>app = lambda{|env| [200,{},["hello world"]] }
+</span><span class='line'>Rack::Server.new.server.run app</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ruby  xxx.rb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="http://upload-images.jianshu.io/upload_images/19532-fe374674bf1d9442.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="无log输出" /></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#test.ru</span>
+</span><span class='line'><span class="n">run</span> <span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span> <span class="mi">200</span><span class="p">,{},</span><span class="o">[</span><span class="s2">&quot;rackup start&quot;</span><span class="o">]</span> <span class="o">]</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rackup test.ru
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="http://upload-images.jianshu.io/upload_images/19532-adb4372d3fafaae5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="有log输出" /></p>
+
+<p>rack会在启动时默认加载一些中间件:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">def</span> <span class="nf">logging_middleware</span>
+</span><span class='line'>        <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">server</span><span class="o">|</span>
+</span><span class='line'>          <span class="n">server</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="o">=~</span> <span class="sr">/CGI/</span> <span class="o">||</span> <span class="n">server</span><span class="o">.</span><span class="n">options</span><span class="o">[</span><span class="ss">:quiet</span><span class="o">]</span> <span class="p">?</span> <span class="kp">nil</span> <span class="p">:</span> <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">CommonLogger</span><span class="p">,</span> <span class="vg">$stderr</span><span class="o">]</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">m</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span><span class="p">}</span>
+</span><span class='line'>        <span class="n">m</span><span class="o">[</span><span class="s2">&quot;deployment&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">ContentLength</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">Chunked</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">logging_middleware</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">TempfileReaper</span><span class="o">]</span>
+</span><span class='line'>        <span class="o">]</span>
+</span><span class='line'>        <span class="n">m</span><span class="o">[</span><span class="s2">&quot;development&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">ContentLength</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">Chunked</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="n">logging_middleware</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">ShowExceptions</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">Lint</span><span class="o">]</span><span class="p">,</span>
+</span><span class='line'>          <span class="o">[</span><span class="no">Rack</span><span class="o">::</span><span class="no">TempfileReaper</span><span class="o">]</span>
+</span><span class='line'>        <span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">m</span>
+</span><span class='line'>      <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>包括body长度错误提示访问记录等。</p>
+
+<p>rack有一个Directory的中间件，可以为目录文件生成一个web服务，今天主要研究这个。
+使用很简单一句话</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#test.ru</span>
+</span><span class='line'><span class="n">run</span>  <span class="no">Rack</span><span class="o">::</span><span class="no">Directory</span><span class="o">.</span><span class="n">new</span> <span class="s2">&quot;~/&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rackup test.ru
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就会把home目录下的所有文件、文件夹在浏览器中显示
+<img src="http://upload-images.jianshu.io/upload_images/19532-144fd52fb50a8428.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="文件页面" /></p>
+
+<p>rails应用中使用rake middleware即可显示所有的middleware(中间件)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>** **rake middleware
+</span><span class='line'>use Rack::Sendfile
+</span><span class='line'>use ActionDispatch::Static
+</span><span class='line'>use Rack::Lock
+</span><span class='line'>use <span class="c">#&lt;ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x007feef1563b90&gt;</span>
+</span><span class='line'>use Rack::Runtime
+</span><span class='line'>use Rack::MethodOverride
+</span><span class='line'>use ActionDispatch::RequestId
+</span><span class='line'>use Rails::Rack::Logger
+</span><span class='line'>use ActionDispatch::ShowExceptions
+</span><span class='line'>use WebConsole::Middleware
+</span><span class='line'>use ActionDispatch::DebugExceptions
+</span><span class='line'>use ActionDispatch::RemoteIp
+</span><span class='line'>use ActionDispatch::Reloader
+</span><span class='line'>use ActionDispatch::Callbacks
+</span><span class='line'>use ActiveRecord::Migration::CheckPending
+</span><span class='line'>use ActiveRecord::ConnectionAdapters::ConnectionManagement
+</span><span class='line'>use ActiveRecord::QueryCache
+</span><span class='line'>use ActionDispatch::Cookies
+</span><span class='line'>use ActionDispatch::Session::CookieStore
+</span><span class='line'>use ActionDispatch::Flash
+</span><span class='line'>use ActionDispatch::ParamsParser
+</span><span class='line'>use Rack::Head
+</span><span class='line'>use Rack::ConditionalGet
+</span><span class='line'>use Rack::ETag
+</span><span class='line'>run Fool::Application.routes
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>rails使用了rack定义的一些中间件，自定义了一些中间件，其中自定义的routes为rack程序，routes 把rails controller的action变为lambda并作为rack程序运行，在rails console里输入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>2.2.1 :001 &gt; QuestionsController.action<span class="o">(</span>:new<span class="o">)</span>
+</span><span class='line'> <span class="o">=</span>&gt; <span class="c">#&lt;Proc:0x007fbe482ee0b0@/Users/killman/.rvm/gems/ruby-2.2.1/gems/actionpack-4.2.1/lib/action_controller/metal.rb:237 (lambda)&gt; </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在config/application.rb可添加、删除、修改中间件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">new_middleware</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span><span class="err">＃：把新中间件添加到列表末尾；</span>
+</span><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">insert_before</span><span class="p">(</span><span class="n">existing_middleware</span><span class="p">,</span>
+</span><span class='line'> <span class="n">new_middleware</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span><span class="c1">#：在 existing_middleware</span>
+</span><span class='line'><span class="err"> 之前添加新中间件；</span>
+</span><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">insert_after</span><span class="p">(</span><span class="n">existing_middleware</span><span class="p">,</span>
+</span><span class='line'> <span class="n">new_middleware</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span><span class="c1">#：在 existing_middleware</span>
+</span><span class='line'><span class="err"> 之后添加新中间件；</span>
+</span><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">swap</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">ShowExceptions</span><span class="p">,</span> <span class="no">Lifo</span><span class="o">::</span><span class="no">ShowExceptions</span> <span class="c1">#替换中间件</span>
+</span><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">delete</span> <span class="s2">&quot;Rack::Lock&quot;</span><span class="c1">#删除中间件</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>中间件的作用：</h3>
+
+<p><strong>Rack::Sendfile
+</strong>：设置服务器上的 X-Sendfile 报头。通过 config.action_dispatch.x_sendfile_header
+ 选项设置。
+<strong>ActionDispatch::Static
+</strong>：用来服务静态资源文件。如果选项 config.serve_static_assets
+ 为 false
+，则禁用这个中间件。
+<strong>Rack::Lock
+</strong>：把 env[&ldquo;rack.multithread&rdquo;]
+ 旗标设为 false
+，程序放入互斥锁中。
+<strong>ActiveSupport::Cache::Strategy::LocalCache::Middleware
+</strong>：在内存中保存缓存，非线程安全。
+<strong>Rack::Runtime
+</strong>：设置 X-Runtime 报头，即执行请求的时长，单位为秒。
+<strong>Rack::MethodOverride
+</strong>：如果指定了 params[:_method]
+ 参数，会覆盖所用的请求方法。这个中间件实现了 PUT 和 DELETE 方法。
+<strong>ActionDispatch::RequestId
+</strong>：在响应中设置一个唯一的 X-Request-Id 报头，并启用 ActionDispatch::Request#uuid
+ 方法。
+<strong>Rails::Rack::Logger
+</strong>：请求开始时提醒日志，请求完成后写入日志。
+<strong>ActionDispatch::ShowExceptions
+</strong>：补救程序抛出的所有异常，调用处理异常的程序，使用特定的格式显示给用户。
+<strong>ActionDispatch::DebugExceptions
+</strong>：如果在本地开发，把异常写入日志，并显示一个调试页面。
+<strong>ActionDispatch::RemoteIp
+</strong>：检查欺骗攻击的 IP。
+<strong>ActionDispatch::Reloader
+</strong>：提供“准备”和“清理”回调，协助开发环境中的代码重新加载功能。
+<strong>ActionDispatch::Callbacks
+</strong>：在处理请求之前调用“准备”回调。
+<strong>ActiveRecord::Migration::CheckPending
+</strong>：检查是否有待运行的迁移，如果有就抛出 ActiveRecord::PendingMigrationError
+ 异常。
+<strong>ActiveRecord::ConnectionAdapters::ConnectionManagement
+</strong>：请求处理完成后，清理活跃的连接，除非在发起请求的环境中把 rack.test
+ 设为 true
+。
+<strong>ActiveRecord::QueryCache
+</strong>：启用 Active Record 查询缓存。
+<strong>ActionDispatch::Cookies
+</strong>：设置请求的 cookies。
+<strong>ActionDispatch::Session::CookieStore
+</strong>：负责把会话存储在 cookies 中。
+<strong>ActionDispatch::Flash
+</strong>：设置 Flash 消息的键。只有设定了 config.action_controller.session_store
+ 选项时才可用。
+<strong>ActionDispatch::ParamsParser
+</strong>：把请求中的参数出入 params
+。
+<strong>ActionDispatch::Head
+</strong>：把 HEAD 请求转换成 GET 请求，并处理。
+<strong>Rack::ConditionalGet
+</strong>：添加对“条件 GET”的支持，如果页面未修改，就不响应。
+<strong>Rack::ETag
+</strong>：为所有字符串类型的主体添加 ETags 报头。ETags 用来验证缓存。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/">me.angry-arthas.com/blog/2015/09/06/rakexue-xi-2/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rake学习1]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/"/>
+    <updated>2015-09-06T00:24:51+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1</id>
+    <content type="html"><![CDATA[<blockquote><p>rack是ruby服务器和rack应用程序之间的一个框架，rails,sinatra都是基
+于rack构建的，都属于rack应用程序。</p>
+
+<p>rack提供了一个标准的接口，用于与服务器进行交互。标准的rack程序
+是一个可以响应call的对象，可以是对象、Proc、lambda甚至是method，
+它接收env参数（环境对象），返回一个数组，数组包括：</p></blockquote>
+
+<ul>
+<li>状态(status)，http响应状态码</li>
+<li>可以是hash，为http的header信息</li>
+<li>拥有each方法的对象，each返回字符串</li>
+</ul>
+
+
+<blockquote><p>rack通过中间件来进行扩展，即对原始的rack程序进行装饰，
+在原有返回数组的基础上进一步处理，并返回rack对象</p>
+
+<p>简单的rack程序</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">app</span> <span class="o">=</span> <span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|[</span><span class="mi">200</span><span class="p">,{},</span><span class="o">[</span><span class="s2">&quot;hello from rack&quot;</span><span class="o">]]</span><span class="p">}</span>
+</span><span class='line'><span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="o">.</span><span class="n">run</span> <span class="n">app</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>使用中间件的rack程序</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Decorator</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@app</span> <span class="o">=</span> <span class="n">app</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">new_body</span> <span class="o">=</span> <span class="s2">&quot;from middleware input &lt;br/&gt;&quot;</span>
+</span><span class='line'>    <span class="n">body</span><span class="o">.</span><span class="n">each</span><span class="p">{</span><span class="o">|</span><span class="n">str</span><span class="o">|</span> <span class="n">new_body</span> <span class="o">&lt;&lt;</span> <span class="n">str</span><span class="p">}</span>
+</span><span class='line'>    <span class="n">headers</span><span class="o">[</span><span class="s1">&#39;Content-Length&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="n">new_body</span><span class="o">.</span><span class="n">bytesize</span><span class="o">.</span><span class="n">to_s</span>
+</span><span class='line'>    <span class="o">[</span><span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="o">[</span><span class="n">new_body</span><span class="o">]]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">app</span> <span class="o">=</span> <span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|[</span><span class="mi">200</span><span class="p">,{},</span><span class="o">[</span><span class="s2">&quot;hello from rack&quot;</span><span class="o">]]</span><span class="p">}</span>
+</span><span class='line'><span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="o">.</span><span class="n">run</span> <span class="no">Decorator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>上面使用中间件的方法在使用多个时容易混乱，rack有一个Builder类可以有效管理
+使用如下</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;decorator&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">app</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Builder</span><span class="o">.</span><span class="n">new</span><span class="p">{</span>
+</span><span class='line'>  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ContentLength</span>
+</span><span class='line'>  <span class="n">use</span> <span class="no">Decorator</span>
+</span><span class='line'>  <span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;hello world&quot;</span><span class="o">]]</span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span><span class="o">.</span><span class="n">to_app</span>
+</span><span class='line'><span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="o">.</span><span class="n">run</span> <span class="n">app</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>使用Rack::Builder的map方法，可以创建有路由的rack程序</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span><span class='line'><span class="n">app</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Builder</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">map</span> <span class="s1">&#39;/hello&#39;</span> <span class="k">do</span>
+</span><span class='line'><span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;hello&quot;</span><span class="o">]]</span> <span class="p">}</span> <span class="k">end</span>
+</span><span class='line'><span class="n">map</span> <span class="s1">&#39;/world&#39;</span> <span class="k">do</span>
+</span><span class='line'><span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;world&quot;</span><span class="o">]]</span> <span class="p">}</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">map</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+</span><span class='line'><span class="n">run</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;all&quot;</span><span class="o">]]</span> <span class="p">}</span> <span class="k">end</span>
+</span><span class='line'><span class="p">}</span><span class="o">.</span><span class="n">to_app</span>
+</span><span class='line'><span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="o">.</span><span class="n">run</span> <span class="n">app</span><span class="p">,</span> <span class="ss">:Port</span> <span class="o">=&gt;</span> <span class="mi">3000</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于rails的全栈性，rack中间件很多，在一些高并发但业务简单的网站或api使用时
+响应时间过长，在这种情况下可以考虑使用rack或者sinatra。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/">me.angry-arthas.com/blog/2015/09/06/rakexue-xi-1/</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Instance_eval,instance_exec,class_eval,class_exec 区别]]></title>
@@ -838,7 +1372,7 @@ If you are not using Rails, tag all the example groups in which you want to use 
 You can now write your specs like so:
 describe &ldquo;the signin process&rdquo;, :type => :feature do
   before :each do
-    User.make(:email => &lsquo;<a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#x75;&#115;&#x65;&#114;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;">&#x75;&#x73;&#x65;&#x72;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+    User.make(:email => &lsquo;<a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#x75;&#115;&#101;&#x72;&#x40;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#x75;&#115;&#x65;&#x72;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
   end</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
