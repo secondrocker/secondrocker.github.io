@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Requirejs - elephant</title>
+  <meta name="author" content="secondrocker">
+
+  
+  <meta name="description" content="js通过script标签的默认加载方式是同步的，即第一个script标签内的js加载完成后，才开始加载第二个，以此类推，直至js文件全部加载完毕。且js的依赖关系必须通过script的顺序才能确保；而在js加载期间，浏览器将停止响应，这大大影响了用户体验，基于此，很多解决js以来和加载的方案出现, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://me.angry-arthas.com/blog/2015/09/14/requirejs/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="elephant" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/jquery.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link
+href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
+rel="stylesheet" type="text/css">-->
+
+  
+
+  <meta name="baidu-site-verification" content="tiawXRGFoq" />
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">elephant</a></h1>
+  
+    <h2>赫本之后 再无女神</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  <fieldset role="search" style="width:268px;">
+    <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=9386497550823479042' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+  </fieldset>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Requirejs</h1>
+    
+    
+      <p class="meta">
+        <time class='entry-date' datetime='2015-09-14T00:26:42+08:00'><span class='date'>2015-09-14</span> <span class='time'>00:26:42</span></time>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>js通过script标签的默认加载方式是同步的，即第一个script标签内的js加载完成后，才开始加载第二个，以此类推，直至js文件全部加载完毕。且js的依赖关系必须通过script的顺序才能确保；而在js加载期间，浏览器将停止响应，这大大影响了用户体验，基于此，很多解决js以来和加载的方案出现,require js就是其中之一。</p>
+
+<p>requirejs加载的模块，一般为符合AMD标准的模块，即用define定义，用ruturn返回暴露方法、变量的模块；requirejs也可以加载飞AMD标准的模块，但比较麻烦，这次不涉及。</p>
+
+<p>require加载js主涉及以下方面：
++ script 标签data-main属性声明requirejs加载的入口模块，async=&ldquo;true&rdquo;(非ie) 和defer(ie)标签表明异步加载。
++ require.config配置模块对应的路径
++ require声明依赖关系</p>
+
+<p>html demo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/require.js&quot;</span> <span class="na">defer</span> <span class="na">async=</span><span class="s">&quot;true&quot;</span> <span class="na">data-main=</span><span class="s">&quot;js/main&quot;</span> <span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="c">&lt;!--给出requirejs路径，声明为异步加载，指定入口模块为main.js（可省略.js）--&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>main.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">require</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+</span><span class='line'>      <span class="c1">//声明模块的位置</span>
+</span><span class='line'>      <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s2">&quot;jquery&quot;</span><span class="o">:</span><span class="s2">&quot;libs/jquery&quot;</span>
+</span><span class='line'>          <span class="s2">&quot;login&quot;</span> <span class="o">:</span> <span class="s2">&quot;libs/login&quot;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="c1">//或使用baseUrl指定所有模块的路径</span>
+</span><span class='line'>      <span class="nx">baseUrl</span><span class="o">:</span> <span class="s2">&quot;js/libs&quot;</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>  <span class="c1">//使用require加载模块，第一个参数为数组，即要加载的模块，将按数组顺序加载；第二个为回调函数，在全部加载完成后执行。</span>
+</span><span class='line'>  <span class="nx">require</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;login&#39;</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span><span class="nx">Login</span><span class="p">){</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;jquery and login module load success!&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">Login</span><span class="p">.</span><span class="nx">do_login</span><span class="p">();</span>
+</span><span class='line'>      <span class="c1">//some else</span>
+</span><span class='line'> <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>符合amd的login module定义</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="c1">//依赖jquery的定义</span>
+</span><span class='line'>  <span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">){</span>
+</span><span class='line'>     <span class="c1">// some definations</span>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">do_login</span><span class="p">(){</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/sessions/create&#39;</span><span class="p">,{</span><span class="nx">uname</span><span class="o">:</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#uname&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(),</span>
+</span><span class='line'>                  <span class="nx">password</span><span class="o">:</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#password&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()},</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+</span><span class='line'>          <span class="c1">//some </span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>     <span class="k">return</span> <span class="p">{</span><span class="nx">do_login</span><span class="o">:</span><span class="nx">do_login</span><span class="p">};</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//不依赖其他模块的定义</span>
+</span><span class='line'><span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="c1">//some definations</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span><span class="nx">xx</span><span class="o">:</span><span class="nx">xx</span><span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>rails没有应用js加载器，一方面是新版本的rails的asset pipe会将所有的js文件打包为一个js文件，没有多个js加载的状态，另一方面turbolink使用褒贬参半的所谓pjax技术，默认链接改为ajax方式，只获取html的bod部分,head部分不变动，使js的加载只在第一次打开网站时进行。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/14/requirejs/">http://me.angry-arthas.com/blog/2015/09/14/requirejs/</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">secondrocker</span></span>
+
+      <time class='entry-date' datetime='2015-09-14T00:26:42+08:00'><span class='date'>2015-09-14</span> <span class='time'>00:26:42</span></time>
+
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/js/'>js</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/09/06/angularjsqian-chang-1/" title="Previous Post: angularjs浅尝1">&laquo; angularjs浅尝1</a>
+      
+      
+    </p>
+  </footer>
+</article>
+<!-- 多说评论框 start -->
+<div style="padding:0px  55px 0px; 55px;">
+  <div class="ds-thread" data-thread-key='/blog/2015/09/14/requirejs/' data-title='requirejs' data-url='http://me.angry-arthas.com/blog/2015/09/14/requirejs/'></div>
+</div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"elephant"};
+  (function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  document.getElementById('content').appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/09/14/requirejs/">Requirejs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/09/06/angularjsqian-chang-1/">Angularjs浅尝1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/09/06/rakexue-xi-2/">Rake学习2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/09/06/rakexue-xi-1/">Rake学习1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/06/07/instance-ev-instance-exec-class-eval-class-exec-qu-bie/">Instance_eval,instance_exec,class_eval,class_exec 区别</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/secondrocker">@secondrocker</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'secondrocker',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - secondrocker -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

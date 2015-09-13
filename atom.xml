@@ -4,7 +4,7 @@
   <title><![CDATA[elephant]]></title>
   <link href="http://me.angry-arthas.com/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-09-07T14:59:30+08:00</updated>
+  <updated>2015-09-14T00:44:14+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -12,6 +12,109 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Requirejs]]></title>
+    <link href="http://me.angry-arthas.com/blog/2015/09/14/requirejs/"/>
+    <updated>2015-09-14T00:26:42+08:00</updated>
+    <id>http://me.angry-arthas.com/blog/2015/09/14/requirejs</id>
+    <content type="html"><![CDATA[<p>js通过script标签的默认加载方式是同步的，即第一个script标签内的js加载完成后，才开始加载第二个，以此类推，直至js文件全部加载完毕。且js的依赖关系必须通过script的顺序才能确保；而在js加载期间，浏览器将停止响应，这大大影响了用户体验，基于此，很多解决js以来和加载的方案出现,require js就是其中之一。</p>
+
+<p>requirejs加载的模块，一般为符合AMD标准的模块，即用define定义，用ruturn返回暴露方法、变量的模块；requirejs也可以加载飞AMD标准的模块，但比较麻烦，这次不涉及。</p>
+
+<p>require加载js主涉及以下方面：
++ script 标签data-main属性声明requirejs加载的入口模块，async=&ldquo;true&rdquo;(非ie) 和defer(ie)标签表明异步加载。
++ require.config配置模块对应的路径
++ require声明依赖关系</p>
+
+<p>html demo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;js/require.js&quot;</span> <span class="na">defer</span> <span class="na">async=</span><span class="s">&quot;true&quot;</span> <span class="na">data-main=</span><span class="s">&quot;js/main&quot;</span> <span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="c">&lt;!--给出requirejs路径，声明为异步加载，指定入口模块为main.js（可省略.js）--&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>main.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="nx">require</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+</span><span class='line'>      <span class="c1">//声明模块的位置</span>
+</span><span class='line'>      <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s2">&quot;jquery&quot;</span><span class="o">:</span><span class="s2">&quot;libs/jquery&quot;</span>
+</span><span class='line'>          <span class="s2">&quot;login&quot;</span> <span class="o">:</span> <span class="s2">&quot;libs/login&quot;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="c1">//或使用baseUrl指定所有模块的路径</span>
+</span><span class='line'>      <span class="nx">baseUrl</span><span class="o">:</span> <span class="s2">&quot;js/libs&quot;</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>  <span class="c1">//使用require加载模块，第一个参数为数组，即要加载的模块，将按数组顺序加载；第二个为回调函数，在全部加载完成后执行。</span>
+</span><span class='line'>  <span class="nx">require</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">,</span><span class="s1">&#39;login&#39;</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">,</span><span class="nx">Login</span><span class="p">){</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;jquery and login module load success!&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">Login</span><span class="p">.</span><span class="nx">do_login</span><span class="p">();</span>
+</span><span class='line'>      <span class="c1">//some else</span>
+</span><span class='line'> <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>符合amd的login module定义</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="c1">//依赖jquery的定义</span>
+</span><span class='line'>  <span class="nx">define</span><span class="p">([</span><span class="s1">&#39;jquery&#39;</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">){</span>
+</span><span class='line'>     <span class="c1">// some definations</span>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">do_login</span><span class="p">(){</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/sessions/create&#39;</span><span class="p">,{</span><span class="nx">uname</span><span class="o">:</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#uname&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(),</span>
+</span><span class='line'>                  <span class="nx">password</span><span class="o">:</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#password&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()},</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+</span><span class='line'>          <span class="c1">//some </span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>     <span class="k">return</span> <span class="p">{</span><span class="nx">do_login</span><span class="o">:</span><span class="nx">do_login</span><span class="p">};</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//不依赖其他模块的定义</span>
+</span><span class='line'><span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="c1">//some definations</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span><span class="nx">xx</span><span class="o">:</span><span class="nx">xx</span><span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>rails没有应用js加载器，一方面是新版本的rails的asset pipe会将所有的js文件打包为一个js文件，没有多个js加载的状态，另一方面turbolink使用褒贬参半的所谓pjax技术，默认链接改为ajax方式，只获取html的bod部分,head部分不变动，使js的加载只在第一次打开网站时进行。</p>
+
+<p>转载请注明出处:<a href="http://me.angry-arthas.com/blog/2015/09/14/requirejs/">http://me.angry-arthas.com/blog/2015/09/14/requirejs/</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Angularjs浅尝1]]></title>
@@ -1372,7 +1475,7 @@ If you are not using Rails, tag all the example groups in which you want to use 
 You can now write your specs like so:
 describe &ldquo;the signin process&rdquo;, :type => :feature do
   before :each do
-    User.make(:email => &lsquo;<a href="&#109;&#x61;&#x69;&#108;&#116;&#111;&#x3a;&#x75;&#115;&#x65;&#x72;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#117;&#x73;&#x65;&#x72;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
+    User.make(:email => &lsquo;<a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#117;&#115;&#101;&#114;&#x40;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;">&#x75;&#x73;&#101;&#114;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a>&rsquo;, :password => &lsquo;caplin&rsquo;)
   end</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
