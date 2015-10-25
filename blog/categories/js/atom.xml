@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Js | elephant]]></title>
   <link href="http://me.angry-arthas.com/blog/categories/js/atom.xml" rel="self"/>
   <link href="http://me.angry-arthas.com/"/>
-  <updated>2015-09-14T00:44:14+08:00</updated>
+  <updated>2015-10-26T00:58:36+08:00</updated>
   <id>http://me.angry-arthas.com/</id>
   <author>
     <name><![CDATA[secondrocker]]></name>
@@ -22,10 +22,14 @@
 
 <p>requirejs加载的模块，一般为符合AMD标准的模块，即用define定义，用ruturn返回暴露方法、变量的模块；requirejs也可以加载飞AMD标准的模块，但比较麻烦，这次不涉及。</p>
 
-<p>require加载js主涉及以下方面：
-+ script 标签data-main属性声明requirejs加载的入口模块，async=&ldquo;true&rdquo;(非ie) 和defer(ie)标签表明异步加载。
-+ require.config配置模块对应的路径
-+ require声明依赖关系</p>
+<p>require加载js主涉及以下方面:</p>
+
+<ul>
+<li>script 标签data-main属性声明requirejs加载的入口模块，async=&ldquo;true&rdquo;(非ie) 和defer(ie)标签表明异步加载。</li>
+<li>require.config配置模块对应的路径</li>
+<li>require声明依赖关系</li>
+</ul>
+
 
 <p>html demo
 <code>html
